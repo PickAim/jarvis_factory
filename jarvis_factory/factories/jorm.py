@@ -22,8 +22,8 @@ class JORMClassesFactory:
         return Client()
 
     @staticmethod
-    def create_account(login: str, hashed_password: str, phone_number: str = "") -> Account:
-        return Account(login, hashed_password, phone_number)
+    def create_account(email: str, hashed_password: str, phone_number: str = "") -> Account:
+        return Account(email, hashed_password, phone_number)
 
     @staticmethod
     def create_user(user_id=-1, name="UNNAMED") -> User:

@@ -6,15 +6,19 @@ from jorm.market.service import Request
 from jorm.server.token.types import TokenType
 
 users: dict[int, User] = {}
-users_by_login: dict[str, User] = {}
-accounts: dict[str, Account] = {}
+users_by_email: dict[str, User] = {}
+users_by_phone: dict[str, User] = {}
+accounts_by_email: dict[str, Account] = {}
+accounts_by_phone: dict[str, Account] = {}
 user_tokens: dict[int, dict[str, dict[TokenType, str]]] = {}
 
 
 class TempUserInfoCollector(UserInfoCollector):
     def get_user_by_account(self, account: Account) -> User | None:
-        if account.email in users_by_login:
-            return users_by_login[account.email]
+        if account.email in users_by_email:
+            return users_by_email[account.email]
+        if account.phone_number in users_by_phone:
+            return users_by_phone[account.phone_number]
         return None
 
     def get_user_by_id(self, user_id: int) -> User | None:
@@ -22,9 +26,14 @@ class TempUserInfoCollector(UserInfoCollector):
             return users[user_id]
         return None
 
-    def get_account(self, login: str) -> Account | None:
-        if login in accounts:
-            return accounts[login]
+    def get_account_by_email(self, email: str) -> Account | None:
+        if email in accounts_by_email:
+            return accounts_by_email[email]
+        return None
+
+    def get_account_by_phone(self, phone: str) -> Account | None:
+        if phone in accounts_by_phone:
+            return accounts_by_phone[phone]
         return None
 
     def get_token_rnd_part(self, user_id: int, imprint: str, token_type: TokenType) -> str:
@@ -72,8 +81,12 @@ class TempUserInfoChanger(UserInfoChanger):
 
     def save_user_and_account(self, user: User, account: Account) -> None:
         users[user.user_id] = user
-        users_by_login[account.email] = user
-        accounts[account.email] = account
+        if account.email is not None and account.email != "":
+            users_by_email[account.email] = user
+            accounts_by_email[account.email] = account
+        if account.phone_number is not None and account.phone_number != "":
+            users_by_phone[account.phone_number] = user
+            accounts_by_phone[account.phone_number] = account
 
     def delete_tokens_for_user(self, user: User, imprint_token: str):
         user_tokens[user.user_id].pop(imprint_token, None)
