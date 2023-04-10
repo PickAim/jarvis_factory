@@ -31,12 +31,14 @@ class JORMClassesFactory:
 
     @lru_cache(maxsize=5)
     def warehouse(self, warehouse_name: str) -> Warehouse:
-        if warehouse_name == FactoryKeywords.DEFAULT_WAREHOUSE:
+        if warehouse_name == FactoryKeywords.DEFAULT_WAREHOUSE.value:
             return self.create_default_warehouse()
         return self.__db_controller.get_warehouse(warehouse_name)
 
     def create_default_warehouse(self) -> Warehouse:
         warehouses: list[Warehouse] = self.__db_controller.get_all_warehouses()
+        if warehouses is None or len(warehouses) == 0:
+            return self.__create_default_warehouse()
         mean_basic_logistic_to_customer_commission: int = 0
         mean_additional_logistic_to_customer_commission: float = 0
         mean_logistic_from_customer_commission: int = 0
@@ -57,7 +59,7 @@ class JORMClassesFactory:
         mean_additional_storage_commission /= len(warehouses)
         mean_mono_palette_storage_commission //= len(warehouses)
         result_warehouse: Warehouse = \
-            Warehouse(str(FactoryKeywords.DEFAULT_WAREHOUSE), 0, HandlerType.MARKETPLACE, Address(), [],
+            Warehouse(str(FactoryKeywords.DEFAULT_WAREHOUSE), 0, HandlerType.MARKETPLACE, Address(), products=[],
                       basic_logistic_to_customer_commission=mean_basic_logistic_to_customer_commission,
                       additional_logistic_to_customer_commission=mean_additional_logistic_to_customer_commission,
                       logistic_from_customer_commission=mean_logistic_from_customer_commission,
@@ -65,6 +67,16 @@ class JORMClassesFactory:
                       additional_storage_commission=mean_additional_storage_commission,
                       mono_palette_storage_commission=mean_mono_palette_storage_commission)
         return result_warehouse
+
+    @staticmethod
+    def __create_default_warehouse() -> Warehouse:
+        return Warehouse(str(FactoryKeywords.DEFAULT_WAREHOUSE), 0, HandlerType.MARKETPLACE, Address(), products=[],
+                         basic_logistic_to_customer_commission=0,
+                         additional_logistic_to_customer_commission=0,
+                         logistic_from_customer_commission=0,
+                         basic_storage_commission=0,
+                         additional_storage_commission=0,
+                         mono_palette_storage_commission=0)
 
     def request(self, json_request) -> Request:
         pass

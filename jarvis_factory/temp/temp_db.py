@@ -1,6 +1,6 @@
 from jorm.jarvis.db_access import JORMCollector, UserInfoCollector
 from jorm.jarvis.db_update import UserInfoChanger, JORMChanger
-from jorm.market.infrastructure import Warehouse, Niche
+from jorm.market.infrastructure import Warehouse, Niche, HandlerType
 from jorm.market.person import Account, User
 from jorm.market.service import Request
 from jorm.server.token.types import TokenType
@@ -42,7 +42,7 @@ class TempUserInfoCollector(UserInfoCollector):
 
 class TempJORMCollector(JORMCollector):
     def get_niche(self, niche_name: str) -> Niche:
-        return Niche("empty niche", {}, 0)
+        return Niche("empty niche", {HandlerType.MARKETPLACE: 0.17}, 0)
 
     def get_warehouse(self, warehouse_name: str) -> Warehouse:
         pass
