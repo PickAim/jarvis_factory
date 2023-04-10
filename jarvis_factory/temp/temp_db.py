@@ -2,7 +2,7 @@ from jorm.jarvis.db_access import JORMCollector, UserInfoCollector
 from jorm.jarvis.db_update import UserInfoChanger, JORMChanger
 from jorm.market.infrastructure import Warehouse, Niche, HandlerType
 from jorm.market.person import Account, User
-from jorm.market.service import Request
+from jorm.market.service import FrequencyRequest, FrequencyResult, UnitEconomyRequest, UnitEconomyResult
 from jorm.server.token.types import TokenType
 
 users: dict[int, User] = {}
@@ -94,8 +94,11 @@ class TempUserInfoChanger(UserInfoChanger):
 
 class TempJORMChanger(JORMChanger):
 
-    def save_request(self, request: Request, user: User) -> None:
-        pass
+    def save_unit_economy_request(self, request: UnitEconomyRequest, result: UnitEconomyResult, user: User) -> int:
+        return 0
+
+    def save_frequency_request(self, request: FrequencyRequest, result: FrequencyResult, user: User) -> int:
+        return 0
 
     def load_new_niche(self, niche_name: str) -> Niche:
         pass

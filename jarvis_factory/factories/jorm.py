@@ -1,16 +1,9 @@
-from enum import Enum
-from functools import lru_cache
-
 from jarvis_calc.database_interactors.db_controller import DBController
 from jorm.market.infrastructure import Warehouse, HandlerType, Address
 from jorm.market.person import Client, Account, User
-from jorm.market.service import Request
+from jorm.support import keywords
 
 from jarvis_factory.factories.jcalc import JCalcClassesFactory
-
-
-class FactoryKeywords(Enum):
-    DEFAULT_WAREHOUSE = "DEFAULT_WAREHOUSE"
 
 
 class JORMClassesFactory:
@@ -29,9 +22,8 @@ class JORMClassesFactory:
     def create_user(user_id=-1, name="UNNAMED") -> User:
         return User(user_id, name)
 
-    @lru_cache(maxsize=5)
     def warehouse(self, warehouse_name: str) -> Warehouse:
-        if warehouse_name == FactoryKeywords.DEFAULT_WAREHOUSE.value:
+        if warehouse_name == keywords.DEFAULT_WAREHOUSE:
             return self.create_default_warehouse()
         return self.__db_controller.get_warehouse(warehouse_name)
 
@@ -59,7 +51,7 @@ class JORMClassesFactory:
         mean_additional_storage_commission /= len(warehouses)
         mean_mono_palette_storage_commission //= len(warehouses)
         result_warehouse: Warehouse = \
-            Warehouse(str(FactoryKeywords.DEFAULT_WAREHOUSE), 0, HandlerType.MARKETPLACE, Address(), products=[],
+            Warehouse(keywords.DEFAULT_WAREHOUSE, 0, HandlerType.MARKETPLACE, Address(), products=[],
                       basic_logistic_to_customer_commission=mean_basic_logistic_to_customer_commission,
                       additional_logistic_to_customer_commission=mean_additional_logistic_to_customer_commission,
                       logistic_from_customer_commission=mean_logistic_from_customer_commission,
@@ -70,13 +62,10 @@ class JORMClassesFactory:
 
     @staticmethod
     def __create_default_warehouse() -> Warehouse:
-        return Warehouse(str(FactoryKeywords.DEFAULT_WAREHOUSE), 0, HandlerType.MARKETPLACE, Address(), products=[],
+        return Warehouse(keywords.DEFAULT_WAREHOUSE, 0, HandlerType.MARKETPLACE, Address(), products=[],
                          basic_logistic_to_customer_commission=0,
                          additional_logistic_to_customer_commission=0,
                          logistic_from_customer_commission=0,
                          basic_storage_commission=0,
                          additional_storage_commission=0,
                          mono_palette_storage_commission=0)
-
-    def request(self, json_request) -> Request:
-        pass
