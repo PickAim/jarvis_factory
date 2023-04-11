@@ -1,3 +1,5 @@
+import datetime
+
 from jorm.jarvis.db_access import JORMCollector, UserInfoCollector
 from jorm.jarvis.db_update import UserInfoChanger, JORMChanger
 from jorm.market.infrastructure import Warehouse, Niche, HandlerType
@@ -50,6 +52,18 @@ class TempJORMCollector(JORMCollector):
     def get_all_warehouses(self) -> list[Warehouse]:
         pass
 
+    def get_all_unit_economy_results(self, user: User) \
+            -> list[tuple[UnitEconomyRequest, UnitEconomyResult, RequestInfo]]:
+        return [
+            (UnitEconomyRequest(50, 10, "nicheA"),
+             UnitEconomyResult(50, 10, 2, 12, 1, 5, 100, 0, 0, 0),
+             RequestInfo(1, datetime.datetime.utcnow(), "first")),
+
+            (UnitEconomyRequest(500, 100, "nicheB"),
+             UnitEconomyResult(500, 100, 20, 120, 10, 50, 1000, 0, 0, 0),
+             RequestInfo(2, datetime.datetime.utcnow(), "second"))
+        ]
+
 
 class TempUserInfoChanger(UserInfoChanger):
     def update_session_tokens(self, old_update_token: str, new_access_token: str, new_update_token: str) -> None:
@@ -95,7 +109,7 @@ class TempUserInfoChanger(UserInfoChanger):
 class TempJORMChanger(JORMChanger):
 
     def save_unit_economy_request(self, request: UnitEconomyRequest, result: UnitEconomyResult,
-                                  request_info: RequestInfo,  user: User) -> int:
+                                  request_info: RequestInfo, user: User) -> int:
         return 0
 
     def save_frequency_request(self, request: FrequencyRequest, result: FrequencyResult,
