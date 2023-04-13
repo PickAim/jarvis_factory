@@ -64,6 +64,17 @@ class TempJORMCollector(JORMCollector):
              RequestInfo(2, datetime.datetime.utcnow(), "second"))
         ]
 
+    def get_all_frequency_results(self, user: User) -> list[tuple[FrequencyRequest, FrequencyResult, RequestInfo]]:
+        return [
+            (FrequencyRequest("nicheA"),
+             FrequencyResult({123: 123}),
+             RequestInfo(1, datetime.datetime.utcnow(), "first")),
+
+            (FrequencyRequest("nicheB"),
+             FrequencyResult({321: 321}),
+             RequestInfo(2, datetime.datetime.utcnow(), "second"))
+        ]
+
 
 class TempUserInfoChanger(UserInfoChanger):
     def update_session_tokens(self, old_update_token: str, new_access_token: str, new_update_token: str) -> None:
@@ -117,4 +128,10 @@ class TempJORMChanger(JORMChanger):
         return 0
 
     def load_new_niche(self, niche_name: str) -> Niche:
+        pass
+
+    def delete_frequency_request(self, request_id: int, user: User) -> None:
+        pass
+
+    def delete_unit_economy_request(self, request_id: int, user: User) -> None:
         pass
