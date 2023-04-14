@@ -1,3 +1,7 @@
+from jarvis_db.repositores.mappers.market.person import UserTableToJormMapper, AccountTableToJormMapper
+from jarvis_db.repositores.market.person import UserRepository, AccountRepository
+from jarvis_db.services.market.person.account_service import AccountService
+from jarvis_db.services.market.person.user_service import UserService
 import datetime
 
 from jorm.jarvis.db_access import JORMCollector, UserInfoCollector
@@ -8,17 +12,28 @@ from jorm.market.person import Account, User
 from jorm.market.service import FrequencyRequest, FrequencyResult, UnitEconomyRequest, UnitEconomyResult, RequestInfo
 from jorm.server.token.types import TokenType
 
-users: dict[int, User] = {}
-users_by_email: dict[str, User] = {}
-users_by_phone: dict[str, User] = {}
-accounts_by_email: dict[str, Account] = {}
-accounts_by_phone: dict[str, Account] = {}
+from jarvis_factory.db_context import DbContext
+
 user_tokens: dict[int, dict[str, dict[TokenType, str]]] = {}
 
 unit_economy_requests: dict[int, dict[int, tuple[UnitEconomyRequest, UnitEconomyResult, RequestInfo]]] = {}
 
 
+def temp_get_account_and_id(email: str, phone: str, account_service: AccountService) -> tuple[Account, int] | None:
+    try:
+        return account_service.find_by_email(email)
+    except (Exception, Exception):
+        try:
+            return account_service.find_by_phone(phone)
+        except (Exception, Exception):
+            return None
+
+
 class TempUserInfoCollector(UserInfoCollector):
+    def __init__(self, user_service: UserService, account_service: AccountService):
+        self.__user_service = user_service
+        self.__account_service = account_service
+
     def get_account_and_id(self, email: str, phone: str) -> tuple[Account, int] | None:
         if email in accounts_by_email:
             return accounts_by_email[email], 0
@@ -27,16 +42,13 @@ class TempUserInfoCollector(UserInfoCollector):
         return None
 
     def get_user_by_account(self, account: Account) -> User | None:
-        if account.email in users_by_email:
-            return users_by_email[account.email]
-        if account.phone_number in users_by_phone:
-            return users_by_phone[account.phone_number]
-        return None
+        found_account, account_id = self.get_account_and_id(account.email, account.phone_number)
+        if found_account is None:
+            return None
+        return self.__user_service.find_by_account_id(account_id)[0]
 
     def get_user_by_id(self, user_id: int) -> User | None:
-        if user_id in users:
-            return users[user_id]
-        return None
+        return self.__user_service.find_by_id(user_id)
 
     def get_token_rnd_part(self, user_id: int, imprint: str, token_type: TokenType) -> str:
         return user_tokens[user_id][imprint][token_type]
@@ -77,6 +89,10 @@ class TempJORMCollector(JORMCollector):
 
 
 class TempUserInfoChanger(UserInfoChanger):
+    def __init__(self, user_service: UserService, account_service: AccountService):
+        self.__user_service = user_service
+        self.__account_service = account_service
+
     def update_session_tokens(self, user_id: int, old_update_token: str,
                               new_access_token: str, new_update_token: str) -> None:
         for user_id in user_tokens:
@@ -106,13 +122,9 @@ class TempUserInfoChanger(UserInfoChanger):
         user_tokens[user.user_id][imprint_token][TokenType.UPDATE] = update_token
 
     def save_user_and_account(self, user: User, account: Account) -> None:
-        users[user.user_id] = user
-        if account.email is not None and account.email != "":
-            users_by_email[account.email] = user
-            accounts_by_email[account.email] = account
-        if account.phone_number is not None and account.phone_number != "":
-            users_by_phone[account.phone_number] = user
-            accounts_by_phone[account.phone_number] = account
+        self.__account_service.create(account)
+        _, account_id = temp_get_account_and_id(account.email, account.phone_number, self.__account_service)
+        self.__user_service.create(user, account_id)
 
     def delete_tokens_for_user(self, user: User, imprint_token: str):
         user_tokens[user.user_id].pop(imprint_token, None)
