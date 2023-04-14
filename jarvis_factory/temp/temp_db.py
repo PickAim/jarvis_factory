@@ -14,6 +14,8 @@ accounts_by_email: dict[str, Account] = {}
 accounts_by_phone: dict[str, Account] = {}
 user_tokens: dict[int, dict[str, dict[TokenType, str]]] = {}
 
+unit_economy_requests: dict[int, dict[int, tuple[UnitEconomyRequest, UnitEconomyResult, RequestInfo]]] = {}
+
 
 class TempUserInfoCollector(UserInfoCollector):
     def get_user_by_account(self, account: Account) -> User | None:
@@ -54,14 +56,11 @@ class TempJORMCollector(JORMCollector):
 
     def get_all_unit_economy_results(self, user: User) \
             -> list[tuple[UnitEconomyRequest, UnitEconomyResult, RequestInfo]]:
+        if user.user_id not in unit_economy_requests:
+            return []
         return [
-            (UnitEconomyRequest(50, 10, "nicheA"),
-             UnitEconomyResult(50, 10, 2, 12, 1, 5, 100, 0, 0, 0),
-             RequestInfo(1, datetime.datetime.utcnow(), "first")),
-
-            (UnitEconomyRequest(500, 100, "nicheB"),
-             UnitEconomyResult(500, 100, 20, 120, 10, 50, 1000, 0, 0, 0),
-             RequestInfo(2, datetime.datetime.utcnow(), "second"))
+            unit_economy_requests[user.user_id][request_id]
+            for request_id in unit_economy_requests[user.user_id]
         ]
 
     def get_all_frequency_results(self, user: User) -> list[tuple[FrequencyRequest, FrequencyResult, RequestInfo]]:
@@ -118,10 +117,17 @@ class TempUserInfoChanger(UserInfoChanger):
 
 
 class TempJORMChanger(JORMChanger):
+    last_request_id = 0
 
     def save_unit_economy_request(self, request: UnitEconomyRequest, result: UnitEconomyResult,
                                   request_info: RequestInfo, user: User) -> int:
-        return 0
+        if user.user_id not in unit_economy_requests:
+            unit_economy_requests[user.user_id] = {}
+        if request_info.id is None:
+            request_info.id = self.last_request_id
+            self.last_request_id += 1
+        unit_economy_requests[user.user_id][request_info.id] = (request, result, request_info)
+        return request_info.id
 
     def save_frequency_request(self, request: FrequencyRequest, result: FrequencyResult,
                                request_info: RequestInfo, user: User) -> int:
@@ -130,8 +136,10 @@ class TempJORMChanger(JORMChanger):
     def load_new_niche(self, niche_name: str) -> Niche:
         pass
 
-    def delete_frequency_request(self, request_id: int, user: User) -> None:
-        pass
-
     def delete_unit_economy_request(self, request_id: int, user: User) -> None:
+        if user.user_id in unit_economy_requests:
+            if request_id in unit_economy_requests[user.user_id]:
+                unit_economy_requests[user.user_id].pop(request_id)
+
+    def delete_frequency_request(self, request_id: int, user: User) -> None:
         pass

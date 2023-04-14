@@ -1,7 +1,6 @@
 from jarvis_calc.database_interactors.db_controller import DBController
 from jorm.market.infrastructure import Warehouse, HandlerType, Address
 from jorm.market.person import Client, Account, User
-from jorm.support import keywords
 
 from jarvis_factory.factories.jcalc import JCalcClassesFactory
 
@@ -23,7 +22,7 @@ class JORMClassesFactory:
         return User(user_id, name)
 
     def warehouse(self, warehouse_name: str) -> Warehouse:
-        if warehouse_name == keywords.DEFAULT_WAREHOUSE:
+        if warehouse_name is None:
             return self.create_default_warehouse()
         return self.__db_controller.get_warehouse(warehouse_name)
 
@@ -51,7 +50,7 @@ class JORMClassesFactory:
         mean_additional_storage_commission /= len(warehouses)
         mean_mono_palette_storage_commission //= len(warehouses)
         result_warehouse: Warehouse = \
-            Warehouse(keywords.DEFAULT_WAREHOUSE, 0, HandlerType.MARKETPLACE, Address(), products=[],
+            Warehouse("DEFAULT_WAREHOUSE", 0, HandlerType.MARKETPLACE, Address(), products=[],
                       basic_logistic_to_customer_commission=mean_basic_logistic_to_customer_commission,
                       additional_logistic_to_customer_commission=mean_additional_logistic_to_customer_commission,
                       logistic_from_customer_commission=mean_logistic_from_customer_commission,
@@ -62,7 +61,7 @@ class JORMClassesFactory:
 
     @staticmethod
     def __create_default_warehouse() -> Warehouse:
-        return Warehouse(keywords.DEFAULT_WAREHOUSE, 0, HandlerType.MARKETPLACE, Address(), products=[],
+        return Warehouse("DEFAULT_WAREHOUSE", 0, HandlerType.MARKETPLACE, Address(), products=[],
                          basic_logistic_to_customer_commission=0,
                          additional_logistic_to_customer_commission=0,
                          logistic_from_customer_commission=0,
