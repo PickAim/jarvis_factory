@@ -22,7 +22,7 @@ class JORMClassesFactory:
         return User(user_id, name)
 
     def warehouse(self, warehouse_name: str) -> Warehouse:
-        if warehouse_name is None or warehouse_name == 'string':
+        if warehouse_name is None or warehouse_name == "":
             return self.create_default_warehouse()
         return self.__db_controller.get_warehouse(warehouse_name)
 
