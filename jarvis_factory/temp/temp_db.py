@@ -1,5 +1,3 @@
-from jarvis_db.repositores.mappers.market.person import UserTableToJormMapper, AccountTableToJormMapper
-from jarvis_db.repositores.market.person import UserRepository, AccountRepository
 from jarvis_db.services.market.person.account_service import AccountService
 from jarvis_db.services.market.person.user_service import UserService
 import datetime
@@ -12,10 +10,7 @@ from jorm.market.person import Account, User
 from jorm.market.service import FrequencyRequest, FrequencyResult, UnitEconomyRequest, UnitEconomyResult, RequestInfo
 from jorm.server.token.types import TokenType
 
-from jarvis_factory.db_context import DbContext
-
 user_tokens: dict[int, dict[str, dict[TokenType, str]]] = {}
-
 unit_economy_requests: dict[int, dict[int, tuple[UnitEconomyRequest, UnitEconomyResult, RequestInfo]]] = {}
 
 
@@ -35,11 +30,7 @@ class TempUserInfoCollector(UserInfoCollector):
         self.__account_service = account_service
 
     def get_account_and_id(self, email: str, phone: str) -> tuple[Account, int] | None:
-        if email in accounts_by_email:
-            return accounts_by_email[email], 0
-        if phone in accounts_by_phone:
-            return accounts_by_phone[phone], 0
-        return None
+        return temp_get_account_and_id(email, phone, self.__account_service)
 
     def get_user_by_account(self, account: Account) -> User | None:
         found_account, account_id = self.get_account_and_id(account.email, account.phone_number)
