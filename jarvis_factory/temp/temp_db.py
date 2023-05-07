@@ -18,6 +18,13 @@ unit_economy_requests: dict[int, dict[int, tuple[UnitEconomyRequest, UnitEconomy
 
 
 class TempUserInfoCollector(UserInfoCollector):
+    def get_account_and_id(self, email: str, phone: str) -> tuple[Account, int] | None:
+        if email in accounts_by_email:
+            return accounts_by_email[email], 0
+        if phone in accounts_by_phone:
+            return accounts_by_phone[phone], 0
+        return None
+
     def get_user_by_account(self, account: Account) -> User | None:
         if account.email in users_by_email:
             return users_by_email[account.email]
@@ -28,16 +35,6 @@ class TempUserInfoCollector(UserInfoCollector):
     def get_user_by_id(self, user_id: int) -> User | None:
         if user_id in users:
             return users[user_id]
-        return None
-
-    def get_account_by_email(self, email: str) -> Account | None:
-        if email in accounts_by_email:
-            return accounts_by_email[email]
-        return None
-
-    def get_account_by_phone(self, phone: str) -> Account | None:
-        if phone in accounts_by_phone:
-            return accounts_by_phone[phone]
         return None
 
     def get_token_rnd_part(self, user_id: int, imprint: str, token_type: TokenType) -> str:
