@@ -1,8 +1,10 @@
+import datetime
+
 from jorm.jarvis.db_access import JORMCollector, UserInfoCollector
 from jorm.jarvis.db_update import UserInfoChanger, JORMChanger
-from jorm.market.infrastructure import Warehouse, Niche
+from jorm.market.infrastructure import Warehouse, Niche, HandlerType
 from jorm.market.person import Account, User
-from jorm.market.service import Request
+from jorm.market.service import FrequencyRequest, FrequencyResult, UnitEconomyRequest, UnitEconomyResult, RequestInfo
 from jorm.server.token.types import TokenType
 
 users: dict[int, User] = {}
@@ -11,6 +13,8 @@ users_by_phone: dict[str, User] = {}
 accounts_by_email: dict[str, Account] = {}
 accounts_by_phone: dict[str, Account] = {}
 user_tokens: dict[int, dict[str, dict[TokenType, str]]] = {}
+
+unit_economy_requests: dict[int, dict[int, tuple[UnitEconomyRequest, UnitEconomyResult, RequestInfo]]] = {}
 
 
 class TempUserInfoCollector(UserInfoCollector):
@@ -39,13 +43,33 @@ class TempUserInfoCollector(UserInfoCollector):
 
 class TempJORMCollector(JORMCollector):
     def get_niche(self, niche_name: str) -> Niche:
-        return Niche("empty niche", {}, 0)
+        return Niche("empty niche", {HandlerType.MARKETPLACE: 0.17}, 0)
 
     def get_warehouse(self, warehouse_name: str) -> Warehouse:
         pass
 
     def get_all_warehouses(self) -> list[Warehouse]:
         pass
+
+    def get_all_unit_economy_results(self, user: User) \
+            -> list[tuple[UnitEconomyRequest, UnitEconomyResult, RequestInfo]]:
+        if user.user_id not in unit_economy_requests:
+            return []
+        return [
+            unit_economy_requests[user.user_id][request_id]
+            for request_id in unit_economy_requests[user.user_id]
+        ]
+
+    def get_all_frequency_results(self, user: User) -> list[tuple[FrequencyRequest, FrequencyResult, RequestInfo]]:
+        return [
+            (FrequencyRequest("nicheA"),
+             FrequencyResult({123: 123}),
+             RequestInfo(1, datetime.datetime.utcnow(), "first")),
+
+            (FrequencyRequest("nicheB"),
+             FrequencyResult({321: 321}),
+             RequestInfo(2, datetime.datetime.utcnow(), "second"))
+        ]
 
 
 class TempUserInfoChanger(UserInfoChanger):
@@ -90,9 +114,29 @@ class TempUserInfoChanger(UserInfoChanger):
 
 
 class TempJORMChanger(JORMChanger):
+    last_request_id = 0
 
-    def save_request(self, request: Request, user: User) -> None:
-        pass
+    def save_unit_economy_request(self, request: UnitEconomyRequest, result: UnitEconomyResult,
+                                  request_info: RequestInfo, user: User) -> int:
+        if user.user_id not in unit_economy_requests:
+            unit_economy_requests[user.user_id] = {}
+        if request_info.id is None:
+            request_info.id = self.last_request_id
+            self.last_request_id += 1
+        unit_economy_requests[user.user_id][request_info.id] = (request, result, request_info)
+        return request_info.id
+
+    def save_frequency_request(self, request: FrequencyRequest, result: FrequencyResult,
+                               request_info: RequestInfo, user: User) -> int:
+        return 0
 
     def load_new_niche(self, niche_name: str) -> Niche:
+        pass
+
+    def delete_unit_economy_request(self, request_id: int, user: User) -> None:
+        if user.user_id in unit_economy_requests:
+            if request_id in unit_economy_requests[user.user_id]:
+                unit_economy_requests[user.user_id].pop(request_id)
+
+    def delete_frequency_request(self, request_id: int, user: User) -> None:
         pass
