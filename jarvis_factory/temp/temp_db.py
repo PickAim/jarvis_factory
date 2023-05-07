@@ -3,6 +3,7 @@ import datetime
 from jorm.jarvis.db_access import JORMCollector, UserInfoCollector
 from jorm.jarvis.db_update import UserInfoChanger, JORMChanger
 from jorm.market.infrastructure import Warehouse, Niche, HandlerType
+from jorm.market.items import Product
 from jorm.market.person import Account, User
 from jorm.market.service import FrequencyRequest, FrequencyResult, UnitEconomyRequest, UnitEconomyResult, RequestInfo
 from jorm.server.token.types import TokenType
@@ -42,7 +43,10 @@ class TempUserInfoCollector(UserInfoCollector):
 
 
 class TempJORMCollector(JORMCollector):
-    def get_niche(self, niche_name: str) -> Niche:
+    def get_products_by_user(self, user: User) -> list[Product]:
+        return []
+
+    def get_niche(self, niche_name: str, marketplace_id: int) -> Niche:
         return Niche("empty niche", {HandlerType.MARKETPLACE: 0.17}, 0)
 
     def get_warehouse(self, warehouse_name: str) -> Warehouse:
@@ -73,7 +77,8 @@ class TempJORMCollector(JORMCollector):
 
 
 class TempUserInfoChanger(UserInfoChanger):
-    def update_session_tokens(self, old_update_token: str, new_access_token: str, new_update_token: str) -> None:
+    def update_session_tokens(self, user_id: int, old_update_token: str,
+                              new_access_token: str, new_update_token: str) -> None:
         for user_id in user_tokens:
             for imprint in user_tokens[user_id]:
                 if user_tokens[user_id][imprint][TokenType.UPDATE] == old_update_token:
