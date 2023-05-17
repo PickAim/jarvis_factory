@@ -1,0 +1,5 @@
+jarvis_calc@ git+https://github.com/PickAim/jarvis_calc.git@v.0.0.25
+jarvis_db@ git+https://github.com/PickAim/jarvis_db.git@v.0.0.29
+jdu@ git+https://github.com/PickAim/jdu.git@v.0.0.13
+jorm@ git+https://github.com/PickAim/jorm.git@v.0.0.25
+fastapi>=0.95.0

@@ -1,16 +1,8 @@
-from enum import Enum
-from functools import lru_cache
-
 from jarvis_calc.database_interactors.db_controller import DBController
 from jorm.market.infrastructure import Warehouse, HandlerType, Address
 from jorm.market.person import Client, Account, User
-from jorm.market.service import Request
 
 from jarvis_factory.factories.jcalc import JCalcClassesFactory
-
-
-class FactoryKeywords(Enum):
-    DEFAULT_WAREHOUSE = "DEFAULT_WAREHOUSE"
 
 
 class JORMClassesFactory:
@@ -29,14 +21,15 @@ class JORMClassesFactory:
     def create_user(user_id=-1, name="UNNAMED") -> User:
         return User(user_id, name)
 
-    @lru_cache(maxsize=5)
     def warehouse(self, warehouse_name: str) -> Warehouse:
-        if warehouse_name == FactoryKeywords.DEFAULT_WAREHOUSE:
+        if warehouse_name is None or warehouse_name == "":
             return self.create_default_warehouse()
         return self.__db_controller.get_warehouse(warehouse_name)
 
     def create_default_warehouse(self) -> Warehouse:
         warehouses: list[Warehouse] = self.__db_controller.get_all_warehouses()
+        if warehouses is None or len(warehouses) == 0:
+            return self.__create_default_warehouse()
         mean_basic_logistic_to_customer_commission: int = 0
         mean_additional_logistic_to_customer_commission: float = 0
         mean_logistic_from_customer_commission: int = 0
@@ -57,7 +50,7 @@ class JORMClassesFactory:
         mean_additional_storage_commission /= len(warehouses)
         mean_mono_palette_storage_commission //= len(warehouses)
         result_warehouse: Warehouse = \
-            Warehouse(str(FactoryKeywords.DEFAULT_WAREHOUSE), 0, HandlerType.MARKETPLACE, Address(), [],
+            Warehouse("DEFAULT_WAREHOUSE", 0, HandlerType.MARKETPLACE, Address(), products=[],
                       basic_logistic_to_customer_commission=mean_basic_logistic_to_customer_commission,
                       additional_logistic_to_customer_commission=mean_additional_logistic_to_customer_commission,
                       logistic_from_customer_commission=mean_logistic_from_customer_commission,
@@ -66,5 +59,12 @@ class JORMClassesFactory:
                       mono_palette_storage_commission=mean_mono_palette_storage_commission)
         return result_warehouse
 
-    def request(self, json_request) -> Request:
-        pass
+    @staticmethod
+    def __create_default_warehouse() -> Warehouse:
+        return Warehouse("DEFAULT_WAREHOUSE", 0, HandlerType.MARKETPLACE, Address(), products=[],
+                         basic_logistic_to_customer_commission=0,
+                         additional_logistic_to_customer_commission=0,
+                         logistic_from_customer_commission=0,
+                         basic_storage_commission=0,
+                         additional_storage_commission=0,
+                         mono_palette_storage_commission=0)
