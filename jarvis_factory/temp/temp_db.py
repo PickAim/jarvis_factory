@@ -95,22 +95,22 @@ class TempUserInfoChanger(UserInfoChanger):
         raise Exception
 
     def update_session_tokens_by_imprint(self, access_token: str, update_token: str, imprint_token: str,
-                                         user: User) -> None:
-        if user.user_id not in user_tokens:
-            user_tokens[user.user_id] = {}
-        if imprint_token in user_tokens[user.user_id]:
-            user_tokens[user.user_id][imprint_token][TokenType.ACCESS] = access_token
-            user_tokens[user.user_id][imprint_token][TokenType.UPDATE] = update_token
+                                         user_id: int) -> None:
+        if user_id not in user_tokens:
+            user_tokens[user_id] = {}
+        if imprint_token in user_tokens[user_id]:
+            user_tokens[user_id][imprint_token][TokenType.ACCESS] = access_token
+            user_tokens[user_id][imprint_token][TokenType.UPDATE] = update_token
         else:
-            self.save_all_tokens(access_token, update_token, imprint_token, user)
+            self.save_all_tokens(access_token, update_token, imprint_token, user_id)
 
-    def save_all_tokens(self, access_token: str, update_token: str, imprint_token: str, user: User) -> None:
-        if user.user_id not in user_tokens:
-            user_tokens[user.user_id] = {}
-        if imprint_token not in user_tokens[user.user_id]:
-            user_tokens[user.user_id][imprint_token] = {}
-        user_tokens[user.user_id][imprint_token][TokenType.ACCESS] = access_token
-        user_tokens[user.user_id][imprint_token][TokenType.UPDATE] = update_token
+    def save_all_tokens(self, access_token: str, update_token: str, imprint_token: str, user_id: int) -> None:
+        if user_id not in user_tokens:
+            user_tokens[user_id] = {}
+        if imprint_token not in user_tokens[user_id]:
+            user_tokens[user_id][imprint_token] = {}
+        user_tokens[user_id][imprint_token][TokenType.ACCESS] = access_token
+        user_tokens[user_id][imprint_token][TokenType.UPDATE] = update_token
 
     def save_user_and_account(self, user: User, account: Account) -> None:
         self.__account_service.create(account)
