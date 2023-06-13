@@ -2,12 +2,10 @@ from jarvis_calc.database_interactors.db_controller import DBController
 from jorm.market.infrastructure import Warehouse, HandlerType, Address
 from jorm.market.person import Account, User
 
-from jarvis_factory.factories.jcalc import JCalcClassesFactory
-
 
 class JORMClassesFactory:
-    def __init__(self):
-        self.__db_controller: DBController = JCalcClassesFactory.create_db_controller()
+    def __init__(self, db_controller: DBController):
+        self.__db_controller: DBController = db_controller
 
     @staticmethod
     def create_account(email: str, hashed_password: str, phone_number: str = "") -> Account:
