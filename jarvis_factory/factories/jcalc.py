@@ -1,21 +1,12 @@
-from fastapi import Depends
 from jarvis_calc.database_interactors.db_controller import DBController
-from jarvis_factory.db_context import DbContext
 
 from jarvis_factory.factories.jdb import JDBClassesFactory
 from jarvis_factory.factories.jdu import JDUClassesFactory
 
-db_context = DbContext(connection_sting='sqlite:///test.db', echo=True)
-
-
-def session_depend():
-    with db_context.session() as session, session.begin():
-        yield session
-
 
 class JCalcClassesFactory:
     @staticmethod
-    def create_db_controller(session=Depends(session_depend)) -> DBController:
+    def create_db_controller(session) -> DBController:
         user_info_collector = JDBClassesFactory.create_user_info_collector(session)
         jorm_collector = JDBClassesFactory.create_jorm_collector()
 
