@@ -1,6 +1,13 @@
+from datetime import datetime
+
 from jarvis_calc.database_interactors.db_controller import DBController
-from jorm.market.infrastructure import Warehouse, HandlerType, Address
+from jorm.market.infrastructure import Warehouse, HandlerType, Address, Niche, Category, Marketplace
+from jorm.market.items import ProductHistory, ProductHistoryUnit, Product
 from jorm.market.person import Account, User
+from jorm.support.types import StorageDict, SpecifiedLeftover, SpecifiedTopPlaceDict
+
+from jarvis_factory.support.const_data import cost_data
+from jarvis_factory.support.functions import leftover_func
 
 
 class JORMClassesFactory:
@@ -15,6 +22,37 @@ class JORMClassesFactory:
     def create_user(user_id=-1, name="UNNAMED") -> User:
         return User(user_id, name)
 
+    @staticmethod
+    def create_default_category() -> Category:
+        return Category("DEFAULT CATEGORY")
+
+    @staticmethod
+    def create_default_marketplace() -> Marketplace:
+        return Marketplace("DEFAULT MARKETPLACE")
+
+    @staticmethod
+    def create_default_niche() -> Niche:
+        niche_commissions_dict: dict[HandlerType, float] = {
+            HandlerType.MARKETPLACE: 0.17,
+            HandlerType.PARTIAL_CLIENT: 0.15,
+            HandlerType.CLIENT: 0.10
+        }
+        niche_cost_data = cost_data.copy()
+        niche_cost_data.sort()
+        products = []
+        niche_name = "DEFAULT NICHE"
+        for i, cost in enumerate(cost_data):
+            spec_leftovers: list[SpecifiedLeftover] = [SpecifiedLeftover("second", leftover_func(cost))]
+            before_trade_storage_dict = StorageDict()
+            before_trade_storage_dict[1] = spec_leftovers
+            products.append(Product(f'prod{i}', cost, i, 4.0, "brand", "seller", niche_name, "default_category",
+                                    history=ProductHistory([
+                                        ProductHistoryUnit(1, datetime.utcnow(), before_trade_storage_dict),
+                                        ProductHistoryUnit(3, datetime.utcnow(), StorageDict())]),
+                                    width=0.15, height=0.3, depth=0.1,
+                                    top_places=SpecifiedTopPlaceDict({'Test niche': i})))
+        return Niche(niche_name, niche_commissions_dict, 0.1, products)
+
     def warehouse(self, warehouse_name: str) -> Warehouse:
         if warehouse_name is None or warehouse_name == "":
             return self.create_default_warehouse()
@@ -23,7 +61,7 @@ class JORMClassesFactory:
     def create_default_warehouse(self) -> Warehouse:
         warehouses: list[Warehouse] = self.__db_controller.get_all_warehouses()
         if warehouses is None or len(warehouses) == 0:
-            return self.__create_default_warehouse()
+            return self.create_simple_default_warehouse()
         mean_basic_logistic_to_customer_commission: int = 0
         mean_additional_logistic_to_customer_commission: float = 0
         mean_logistic_from_customer_commission: int = 0
@@ -54,7 +92,7 @@ class JORMClassesFactory:
         return result_warehouse
 
     @staticmethod
-    def __create_default_warehouse() -> Warehouse:
+    def create_simple_default_warehouse() -> Warehouse:
         return Warehouse("DEFAULT_WAREHOUSE", 0, HandlerType.MARKETPLACE, Address(), products=[],
                          basic_logistic_to_customer_commission=0,
                          additional_logistic_to_customer_commission=0,

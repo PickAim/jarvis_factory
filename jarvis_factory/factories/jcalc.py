@@ -8,9 +8,9 @@ class JCalcClassesFactory:
     @staticmethod
     def create_db_controller(session) -> DBController:
         user_info_collector = JDBClassesFactory.create_user_info_collector(session)
-        jorm_collector = JDBClassesFactory.create_jorm_collector()
+        jorm_collector = JDBClassesFactory.create_jorm_collector(session)
 
         user_info_changer = JDUClassesFactory.create_user_info_changer(session)
-        jorm_changer = JDUClassesFactory.create_jorm_changer()
+        jorm_changer = JDUClassesFactory.create_jorm_changer(session)
 
         return DBController(user_info_collector, jorm_collector, user_info_changer, jorm_changer)
