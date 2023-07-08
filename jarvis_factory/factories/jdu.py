@@ -15,6 +15,8 @@ from jorm.jarvis.db_update import UserInfoChanger, JORMChanger
 
 from sqlalchemy.orm import Session
 
+from jarvis_factory.support.jdu.initializers import WildberriesDBFillerInitializer
+
 
 class JDUClassesFactory:
     @staticmethod
@@ -32,4 +34,4 @@ class JDUClassesFactory:
 
     @staticmethod
     def create_wb_db_filler(session: Session) -> WildberriesDBFillerImpl:
-        return WildberriesDBFillerImpl(WildberriesDataProviderWithoutKeyImpl(), session)
+        return WildberriesDBFillerImpl(session, WildberriesDataProviderWithoutKeyImpl(), WildberriesDBFillerInitializer)
