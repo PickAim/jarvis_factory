@@ -1,11 +1,4 @@
-from jarvis_db.repositores.mappers.market.person import AccountTableToJormMapper, UserTableToJormMapper
-from jarvis_db.repositores.mappers.market.person.token_mappers import TokenTableMapper
-from jarvis_db.repositores.market.person import AccountRepository, UserRepository
-from jarvis_db.repositores.market.person.token_repository import TokenRepository
-from jarvis_db.services.market.person import TokenService
-from jarvis_db.services.market.person.account_service import AccountService
-from jarvis_db.services.market.person.user_service import UserService
-from jarvis_factory.factories.jdb import JDBClassesFactory
+from jarvis_db.factories.services import create_economy_service
 from jdu.db_tools.fill.db_fillers import StandardDBFiller
 from jdu.db_tools.fill.wildberries_fillers import WildberriesDBFillerImpl
 from jdu.db_tools.update.jorm_changer_impl import JormChangerImpl
@@ -15,21 +8,22 @@ from jorm.jarvis.db_update import UserInfoChanger, JORMChanger
 
 from sqlalchemy.orm import Session
 
+from jarvis_factory.support.jdb.services import JDBServiceFactory
 from jarvis_factory.support.jdu.initializers import WildberriesDBFillerInitializer
 
 
 class JDUClassesFactory:
     @staticmethod
     def create_user_info_changer(session) -> UserInfoChanger:
-        account_service = AccountService(AccountRepository(session), AccountTableToJormMapper())
-        user_service = UserService(UserRepository(session), UserTableToJormMapper())
-        token_service = TokenService(TokenRepository(session), TokenTableMapper())
+        account_service = JDBServiceFactory.create_account_service(session)
+        user_service = JDBServiceFactory.create_user_service(session)
+        token_service = JDBServiceFactory.create_token_service(session)
         return UserInfoChangerImpl(user_service, account_service, token_service)
 
     @staticmethod
     def create_jorm_changer(session, db_filler: StandardDBFiller) -> JORMChanger:
-        unit_economy_service = JDBClassesFactory.create_economy_service(session)
-        frequency_service = JDBClassesFactory.create_frequency_service(session)
+        unit_economy_service = create_economy_service(session)
+        frequency_service = JDBServiceFactory.create_frequency_service(session)
         return JormChangerImpl(unit_economy_service, frequency_service, db_filler)
 
     @staticmethod

@@ -1,2 +1,2 @@
 # jarvis_factory
-Jarvis factories for any concrete realization
+Jarvis' factories for any concrete realization
