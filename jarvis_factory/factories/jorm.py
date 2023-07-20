@@ -57,14 +57,8 @@ class JORMClassesFactory:
                                     top_places=SpecifiedTopPlaceDict({'Test niche': i})))
         return Niche(niche_name, niche_commissions_dict, 0.1, products)
 
-    def warehouse(self, warehouse_name: str) -> Warehouse:
-        if warehouse_name is None or warehouse_name == "":
-            return self.create_default_warehouse()
-        return self.__db_controller.get_warehouse(warehouse_name)
-
-    def create_default_warehouse(self) -> Warehouse:
-        warehouses: list[Warehouse] = self.__db_controller.get_all_warehouses()
-        if warehouses is None or len(warehouses) == 0:
+    def create_default_warehouse(self, reference_warehouses: list[Warehouse]) -> Warehouse:
+        if reference_warehouses is None or len(reference_warehouses) == 0:
             return self.create_simple_default_warehouse()
         mean_basic_logistic_to_customer_commission: int = 0
         mean_additional_logistic_to_customer_commission: float = 0
@@ -72,19 +66,19 @@ class JORMClassesFactory:
         mean_basic_storage_commission: int = 0
         mean_additional_storage_commission: float = 0
         mean_mono_palette_storage_commission: int = 0
-        for warehouse in warehouses:
+        for warehouse in reference_warehouses:
             mean_basic_logistic_to_customer_commission += warehouse.basic_logistic_to_customer_commission
             mean_additional_logistic_to_customer_commission += warehouse.additional_logistic_to_customer_commission
             mean_logistic_from_customer_commission += warehouse.logistic_from_customer_commission
             mean_basic_storage_commission += warehouse.basic_storage_commission
             mean_additional_storage_commission += warehouse.additional_storage_commission
             mean_mono_palette_storage_commission += warehouse.mono_palette_storage_commission
-        mean_basic_logistic_to_customer_commission //= len(warehouses)
-        mean_additional_logistic_to_customer_commission /= len(warehouses)
-        mean_logistic_from_customer_commission //= len(warehouses)
-        mean_basic_storage_commission //= len(warehouses)
-        mean_additional_storage_commission /= len(warehouses)
-        mean_mono_palette_storage_commission //= len(warehouses)
+        mean_basic_logistic_to_customer_commission //= len(reference_warehouses)
+        mean_additional_logistic_to_customer_commission /= len(reference_warehouses)
+        mean_logistic_from_customer_commission //= len(reference_warehouses)
+        mean_basic_storage_commission //= len(reference_warehouses)
+        mean_additional_storage_commission /= len(reference_warehouses)
+        mean_mono_palette_storage_commission //= len(reference_warehouses)
         result_warehouse: Warehouse = \
             Warehouse(DEFAULT_WAREHOUSE_NAME, 0, HandlerType.MARKETPLACE, Address(), products=[],
                       basic_logistic_to_customer_commission=mean_basic_logistic_to_customer_commission,

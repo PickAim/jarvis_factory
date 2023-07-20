@@ -1,3 +1,4 @@
+from jarvis_db.factories.services import create_economy_service
 from jdu.db_tools.fill.db_fillers import StandardDBFiller
 from jdu.db_tools.fill.wildberries_fillers import WildberriesDBFillerImpl
 from jdu.db_tools.update.jorm_changer_impl import JormChangerImpl
@@ -21,7 +22,7 @@ class JDUClassesFactory:
 
     @staticmethod
     def create_jorm_changer(session, db_filler: StandardDBFiller) -> JORMChanger:
-        unit_economy_service = JDBServiceFactory.create_economy_service(session)
+        unit_economy_service = create_economy_service(session)
         frequency_service = JDBServiceFactory.create_frequency_service(session)
         return JormChangerImpl(unit_economy_service, frequency_service, db_filler)
 
