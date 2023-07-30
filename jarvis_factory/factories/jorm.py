@@ -39,20 +39,16 @@ class JORMClassesFactory:
             HandlerType.PARTIAL_CLIENT: 0.15,
             HandlerType.CLIENT: 0.10
         }
-        niche_cost_data = cost_data.copy()
-        niche_cost_data.sort()
         products = []
         niche_name = DEFAULT_NICHE_NAME
         for i, cost in enumerate(cost_data):
             spec_leftovers: list[SpecifiedLeftover] = [SpecifiedLeftover("second", leftover_func(cost))]
             before_trade_storage_dict = StorageDict()
             before_trade_storage_dict[1] = spec_leftovers
-            after_trade_storage_dict = StorageDict()
-            after_trade_storage_dict[1] = [SpecifiedLeftover("second", max(leftover_func(cost) - 2, 0))]
             products.append(Product(f'prod{i}', cost, i, 4.0, "brand", "seller", niche_name, DEFAULT_CATEGORY_NAME,
                                     history=ProductHistory([
                                         ProductHistoryUnit(1, datetime.utcnow(), before_trade_storage_dict),
-                                        ProductHistoryUnit(3, datetime.utcnow(), after_trade_storage_dict)]),
+                                        ProductHistoryUnit(3, datetime.utcnow(), StorageDict())]),
                                     width=0.15, height=0.3, depth=0.1,
                                     top_places=SpecifiedTopPlaceDict({'Test niche': i})))
         return Niche(niche_name, niche_commissions_dict, 0.1, products)

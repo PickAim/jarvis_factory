@@ -1,33 +1,59 @@
-from jarvis_db.repositores.mappers.market.person import AccountTableToJormMapper, UserTableToJormMapper
-from jarvis_db.repositores.mappers.market.person.token_mappers import TokenTableMapper
-from jarvis_db.repositores.mappers.market.service import FrequencyRequestTableToJormMapper
-from jarvis_db.repositores.market.infrastructure import NicheRepository
-from jarvis_db.repositores.market.person import AccountRepository, UserRepository
-from jarvis_db.repositores.market.person.token_repository import TokenRepository
-from jarvis_db.repositores.market.service import FrequencyRequestRepository, FrequencyResultRepository
+from jarvis_db.factories.services import create_category_service, create_marketplace_service, create_niche_service, \
+    create_warehouse_service, create_economy_service, create_frequency_service, create_product_card_service, \
+    create_product_history_service, create_token_service, create_user_service, create_account_service
+from jarvis_db.services.market.infrastructure.category_service import CategoryService
+from jarvis_db.services.market.infrastructure.marketplace_service import MarketplaceService
+from jarvis_db.services.market.infrastructure.niche_service import NicheService
+from jarvis_db.services.market.infrastructure.warehouse_service import WarehouseService
+from jarvis_db.services.market.items.product_card_service import ProductCardService
+from jarvis_db.services.market.items.product_history_service import ProductHistoryService
 from jarvis_db.services.market.person import UserService, AccountService, TokenService
+from jarvis_db.services.market.service.economy_service import EconomyService
 from jarvis_db.services.market.service.frequency_service import FrequencyService
 from sqlalchemy.orm import Session
 
 
 class JDBServiceFactory:
     @staticmethod
+    def create_marketplace_service(session: Session) -> MarketplaceService:
+        return create_marketplace_service(session)
+
+    @staticmethod
+    def create_category_service(session: Session) -> CategoryService:
+        return create_category_service(session)
+
+    @staticmethod
+    def create_niche_service(session: Session) -> NicheService:
+        return create_niche_service(session)
+
+    @staticmethod
+    def create_warehouse_service(session: Session) -> WarehouseService:
+        return create_warehouse_service(session)
+
+    @staticmethod
+    def create_economy_service(session: Session) -> EconomyService:
+        return create_economy_service(session)
+
+    @staticmethod
     def create_frequency_service(session: Session) -> FrequencyService:
-        return FrequencyService(
-            FrequencyRequestRepository(session),
-            NicheRepository(session),
-            FrequencyResultRepository(session),
-            FrequencyRequestTableToJormMapper(),
-        )
+        return create_frequency_service(session)
+
+    @staticmethod
+    def create_product_card_service(session: Session) -> ProductCardService:
+        return create_product_card_service(session)
+
+    @staticmethod
+    def create_product_history_service(session: Session) -> ProductHistoryService:
+        return create_product_history_service(session)
 
     @staticmethod
     def create_token_service(session: Session) -> TokenService:
-        return TokenService(TokenRepository(session), TokenTableMapper())
+        return create_token_service(session)
 
     @staticmethod
     def create_user_service(session: Session) -> UserService:
-        return UserService(UserRepository(session), UserTableToJormMapper())
+        return create_user_service(session)
 
     @staticmethod
     def create_account_service(session: Session) -> AccountService:
-        return AccountService(AccountRepository(session), AccountTableToJormMapper())
+        return create_account_service(session)
