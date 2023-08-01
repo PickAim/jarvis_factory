@@ -87,10 +87,4 @@ class JORMClassesFactory:
 
     @staticmethod
     def create_simple_default_warehouse() -> Warehouse:
-        return Warehouse(DEFAULT_WAREHOUSE_NAME, 0, HandlerType.MARKETPLACE, Address(), products=[],
-                         basic_logistic_to_customer_commission=0,
-                         additional_logistic_to_customer_commission=0,
-                         logistic_from_customer_commission=0,
-                         basic_storage_commission=0,
-                         additional_storage_commission=0,
-                         mono_palette_storage_commission=0)
+        return Warehouse(DEFAULT_WAREHOUSE_NAME, 1, HandlerType.MARKETPLACE, Address())
