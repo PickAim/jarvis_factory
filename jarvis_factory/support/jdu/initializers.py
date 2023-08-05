@@ -1,7 +1,11 @@
 import requests
-from jdu.db_tools.fill.base import DBFiller
+from jdu.db_tools.fill.db_fillers_impl import StandardDBFillerImpl
 from jdu.db_tools.fill.initializers import DBFillerInitializer
+from jdu.db_tools.update.jorm.base import InitInfo, JORMChangerBase
+from jdu.db_tools.update.jorm.initializers import JORMChangerInitializer
 from jdu.providers.initializers import DataProviderInitializer
+from jdu.providers.wildberries_providers import WildberriesUserMarketDataProviderImpl, \
+    WildberriesDataProviderWithoutKeyImpl
 from jdu.support.commission.wildberries_commission_resolver import WildberriesCommissionResolver
 from requests.adapters import HTTPAdapter
 from sqlalchemy.orm import Session
@@ -28,11 +32,25 @@ class WildberriesDBFillerInitializer(DBFillerInitializer):
     def get_marketplace_name(self) -> str:
         return self.WILDBERRIES_NAME
 
-    def additional_init_db_filler(self, session: Session, db_filler: DBFiller):
-        db_filler.marketplace_service = JDBServiceFactory.create_marketplace_service(session)
-        db_filler.category_service = JDBServiceFactory.create_category_service(session)
-        db_filler.niche_service = JDBServiceFactory.create_niche_service(session)
 
-        db_filler.product_service = JDBServiceFactory.create_product_card_service(session)
-        db_filler.warehouse_service = JDBServiceFactory.create_warehouse_service(session)
-        db_filler.product_history_service = JDBServiceFactory.create_product_history_service(session)
+INITIALIZER_MAP: dict[str, InitInfo] = {
+    'wildberries': InitInfo(WildberriesUserMarketDataProviderImpl,
+                            WildberriesDataProviderWithoutKeyImpl,
+                            StandardDBFillerImpl,
+                            WildberriesDataProviderInitializer,
+                            WildberriesDBFillerInitializer)
+}
+
+
+class JORMChangerInitializerImpl(JORMChangerInitializer):
+    @staticmethod
+    def init_jorm_changer(session: Session, jorm_changer: JORMChangerBase):
+        jorm_changer.economy_service = JDBServiceFactory.create_economy_service(session)
+        jorm_changer.frequency_service = JDBServiceFactory.create_frequency_service(session)
+        jorm_changer.user_service = JDBServiceFactory.create_user_service(session)
+        jorm_changer.marketplace_service = JDBServiceFactory.create_marketplace_service(session)
+        jorm_changer.warehouse_service = JDBServiceFactory.create_warehouse_service(session)
+        jorm_changer.category_service = JDBServiceFactory.create_category_service(session)
+        jorm_changer.niche_service = JDBServiceFactory.create_niche_service(session)
+        jorm_changer.product_card_service = JDBServiceFactory.create_product_card_service(session)
+        jorm_changer.initializing_mapping = INITIALIZER_MAP
