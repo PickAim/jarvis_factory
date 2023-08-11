@@ -1,5 +1,5 @@
-jarvis_calc@ git+https://github.com/PickAim/jarvis_calc.git@v.0.1.15
-jarvis_db@ git+https://github.com/PickAim/jarvis_db.git@v.0.1.18
-jdu@ git+https://github.com/PickAim/jdu.git@v.0.1.15
+jarvis_calc@ git+https://github.com/PickAim/jarvis_calc.git@v.0.1.16
+jarvis_db@ git+https://github.com/PickAim/jarvis_db.git@v.0.1.20
+jdu@ git+https://github.com/PickAim/jdu.git@v.0.1.16
 SQLAlchemy>=2.0.0
 requests>=2.31.0
