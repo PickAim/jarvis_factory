@@ -3,12 +3,13 @@ from jdu.db_tools.fill.db_fillers_impl import StandardDBFillerImpl
 from jdu.db_tools.fill.initializers import DBFillerInitializer
 from jdu.db_tools.update.jorm.base import InitInfo, JORMChangerBase
 from jdu.db_tools.update.jorm.initializers import JORMChangerInitializer
+from jdu.db_tools.update.user.base import UserInfoChangerBase
+from jdu.db_tools.update.user.initializers import UserInfoChangerInitializer
 from jdu.providers.initializers import DataProviderInitializer
 from jdu.providers.wildberries_providers import WildberriesUserMarketDataProviderImpl, \
     WildberriesDataProviderWithoutKeyImpl
 from jdu.support.commission.wildberries_commission_resolver import WildberriesCommissionResolver
 from requests.adapters import HTTPAdapter
-from sqlalchemy.orm import Session
 
 from jarvis_factory.support.jdb.services import JDBServiceFactory
 
@@ -43,8 +44,8 @@ INITIALIZER_MAP: dict[str, InitInfo] = {
 
 
 class JORMChangerInitializerImpl(JORMChangerInitializer):
-    @staticmethod
-    def init_jorm_changer(session: Session, jorm_changer: JORMChangerBase):
+    def _init_something(self, jorm_changer: JORMChangerBase):
+        session = self.session
         jorm_changer.economy_service = JDBServiceFactory.create_economy_service(session)
         jorm_changer.frequency_service = JDBServiceFactory.create_frequency_service(session)
         jorm_changer.user_service = JDBServiceFactory.create_user_service(session)
@@ -54,3 +55,11 @@ class JORMChangerInitializerImpl(JORMChangerInitializer):
         jorm_changer.niche_service = JDBServiceFactory.create_niche_service(session)
         jorm_changer.product_card_service = JDBServiceFactory.create_product_card_service(session)
         jorm_changer.initializing_mapping = INITIALIZER_MAP
+
+
+class UserInfoChangerInitializerImpl(UserInfoChangerInitializer):
+    def _init_something(self, jorm_changer: UserInfoChangerBase):
+        session = self.session
+        jorm_changer.user_service = JDBServiceFactory.create_user_service(session)
+        jorm_changer.token_service = JDBServiceFactory.create_token_service(session)
+        jorm_changer.account_service = JDBServiceFactory.create_account_service(session)
