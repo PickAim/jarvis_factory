@@ -9,14 +9,13 @@ from jdu.providers.initializers import DataProviderInitializer
 from jdu.providers.wildberries_providers import WildberriesUserMarketDataProviderImpl, \
     WildberriesDataProviderWithoutKeyImpl
 from jdu.support.commission.wildberries_commission_resolver import WildberriesCommissionResolver
+from jdu.support.constant import WILDBERRIES_NAME
 from requests.adapters import HTTPAdapter
 
 from jarvis_factory.support.jdb.services import JDBServiceFactory
 
 
 class WildberriesDataProviderInitializer(DataProviderInitializer):
-    WILDBERRIES_NAME = 'wildberries'
-
     def additional_init_data_provider(self, data_provider):
         data_provider.commission_resolver = WildberriesCommissionResolver()
         data_provider.session = requests.Session()
@@ -24,22 +23,21 @@ class WildberriesDataProviderInitializer(DataProviderInitializer):
         data_provider.session.mount('https://', __adapter)
 
     def get_marketplace_name(self) -> str:
-        return self.WILDBERRIES_NAME
+        return WILDBERRIES_NAME
 
 
 class WildberriesDBFillerInitializer(DBFillerInitializer):
-    WILDBERRIES_NAME = 'wildberries'
 
     def get_marketplace_name(self) -> str:
-        return self.WILDBERRIES_NAME
+        return WILDBERRIES_NAME
 
 
 INITIALIZER_MAP: dict[str, InitInfo] = {
-    'wildberries': InitInfo(WildberriesUserMarketDataProviderImpl,
-                            WildberriesDataProviderWithoutKeyImpl,
-                            StandardDBFillerImpl,
-                            WildberriesDataProviderInitializer,
-                            WildberriesDBFillerInitializer)
+    WILDBERRIES_NAME: InitInfo(WildberriesUserMarketDataProviderImpl,
+                               WildberriesDataProviderWithoutKeyImpl,
+                               StandardDBFillerImpl,
+                               WildberriesDataProviderInitializer,
+                               WildberriesDBFillerInitializer)
 }
 
 
