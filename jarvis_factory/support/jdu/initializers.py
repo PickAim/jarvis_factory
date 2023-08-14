@@ -47,6 +47,7 @@ class JORMChangerInitializerImpl(JORMChangerInitializer):
         jorm_changer.economy_service = JDBServiceFactory.create_economy_service(session)
         jorm_changer.frequency_service = JDBServiceFactory.create_frequency_service(session)
         jorm_changer.user_service = JDBServiceFactory.create_user_service(session)
+        jorm_changer.user_item_service = JDBServiceFactory.create_user_items_service(session)
         jorm_changer.marketplace_service = JDBServiceFactory.create_marketplace_service(session)
         jorm_changer.warehouse_service = JDBServiceFactory.create_warehouse_service(session)
         jorm_changer.category_service = JDBServiceFactory.create_category_service(session)
@@ -56,8 +57,8 @@ class JORMChangerInitializerImpl(JORMChangerInitializer):
 
 
 class UserInfoChangerInitializerImpl(UserInfoChangerInitializer):
-    def _init_something(self, jorm_changer: UserInfoChangerBase):
+    def _init_something(self, user_info_changer: UserInfoChangerBase):
         session = self.session
-        jorm_changer.user_service = JDBServiceFactory.create_user_service(session)
-        jorm_changer.token_service = JDBServiceFactory.create_token_service(session)
-        jorm_changer.account_service = JDBServiceFactory.create_account_service(session)
+        user_info_changer.user_service = JDBServiceFactory.create_user_service(session)
+        user_info_changer.token_service = JDBServiceFactory.create_token_service(session)
+        user_info_changer.account_service = JDBServiceFactory.create_account_service(session)
