@@ -15,11 +15,12 @@ class JDBClassesFactory:
 
     @staticmethod
     def create_jorm_collector(session) -> JORMCollector:
+        marketplace_service = JDBServiceFactory.create_marketplace_service(session)
         niche_service = JDBServiceFactory.create_niche_service(session)
         category_service = JDBServiceFactory.create_category_service(session)
         warehouse_service = JDBServiceFactory.create_warehouse_service(session)
         unit_economy_service = JDBServiceFactory.create_economy_service(session)
         frequency_service = JDBServiceFactory.create_frequency_service(session)
-        marketplace_service = JDBServiceFactory.create_marketplace_service(session)
+        user_items_service = JDBServiceFactory.create_user_items_service(session)
         return JormCollectorImpl(marketplace_service, niche_service, category_service,
-                                 warehouse_service, unit_economy_service, frequency_service)
+                                 warehouse_service, unit_economy_service, frequency_service, user_items_service)
