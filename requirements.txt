@@ -1,4 +1,4 @@
-jarvis_calc@ git+https://github.com/PickAim/jarvis_calc.git@v.0.1.16
+jarvis_calc@ git+https://github.com/PickAim/jarvis_calc.git@v.0.1.17
 jarvis_db@ git+https://github.com/PickAim/jarvis_db.git@v.0.1.22
 jdu@ git+https://github.com/PickAim/jdu.git@v.0.1.17-techno
 SQLAlchemy>=2.0.0
