@@ -1,15 +1,16 @@
 import requests
+from jarvis_db.factories.services import create_product_history_service
 from jdu.db_tools.fill.db_fillers_impl import StandardDBFillerImpl
 from jdu.db_tools.fill.initializers import DBFillerInitializer
 from jdu.db_tools.update.jorm.base import InitInfo, JORMChangerBase
 from jdu.db_tools.update.jorm.initializers import JORMChangerInitializer
 from jdu.db_tools.update.user.base import UserInfoChangerBase
 from jdu.db_tools.update.user.initializers import UserInfoChangerInitializer
-from jdu.providers.initializers import DataProviderInitializer
 from jdu.providers.wildberries_providers import WildberriesUserMarketDataProviderImpl, \
     WildberriesDataProviderWithoutKeyImpl
 from jdu.support.commission.wildberries_commission_resolver import WildberriesCommissionResolver
 from jdu.support.constant import WILDBERRIES_NAME
+from jorm.server.providers.initializers import DataProviderInitializer
 from requests.adapters import HTTPAdapter
 
 from jarvis_factory.support.jdb.services import JDBServiceFactory
@@ -53,6 +54,7 @@ class JORMChangerInitializerImpl(JORMChangerInitializer):
         jorm_changer.category_service = JDBServiceFactory.create_category_service(session)
         jorm_changer.niche_service = JDBServiceFactory.create_niche_service(session)
         jorm_changer.product_card_service = JDBServiceFactory.create_product_card_service(session)
+        jorm_changer.product_history_service = create_product_history_service(session)
         jorm_changer.initializing_mapping = INITIALIZER_MAP
 
 
