@@ -6,11 +6,11 @@ from jdu.db_tools.update.jorm.base import InitInfo, JORMChangerBase
 from jdu.db_tools.update.jorm.initializers import JORMChangerInitializer
 from jdu.db_tools.update.user.base import UserInfoChangerBase
 from jdu.db_tools.update.user.initializers import UserInfoChangerInitializer
-from jdu.providers.initializers import DataProviderInitializer
 from jdu.providers.wildberries_providers import WildberriesUserMarketDataProviderImpl, \
     WildberriesDataProviderWithoutKeyImpl
 from jdu.support.commission.wildberries_commission_resolver import WildberriesCommissionResolver
 from jdu.support.constant import WILDBERRIES_NAME
+from jorm.server.providers.initializers import DataProviderInitializer
 from requests.adapters import HTTPAdapter
 
 from jarvis_factory.support.jdb.services import JDBServiceFactory
