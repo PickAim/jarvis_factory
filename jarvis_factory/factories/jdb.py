@@ -32,7 +32,7 @@ class JDBClassesFactory:
             niche_service=niche_service,
             category_service=category_service,
             warehouse_service=warehouse_service,
-            unit_economy_service=unit_economy_service,
+            economy_service=unit_economy_service,
             user_items_service=user_items_service)
 
     @staticmethod
