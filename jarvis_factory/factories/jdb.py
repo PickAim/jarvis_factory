@@ -25,15 +25,18 @@ class JDBClassesFactory:
         niche_service = JDBServiceFactory.create_niche_service(session)
         category_service = JDBServiceFactory.create_category_service(session)
         warehouse_service = JDBServiceFactory.create_warehouse_service(session)
-        unit_economy_service = JDBServiceFactory.create_economy_service(session)
+        simple_economy_service = JDBServiceFactory.create_economy_service(session)
+        transit_economy_service = JDBServiceFactory.create_transit_service(session)
         user_items_service = JDBServiceFactory.create_user_items_service(session)
         return JormCollectorImpl(
             marketplace_service=marketplace_service,
             niche_service=niche_service,
             category_service=category_service,
             warehouse_service=warehouse_service,
-            economy_service=unit_economy_service,
-            user_items_service=user_items_service)
+            economy_service=simple_economy_service,
+            transit_serivce=transit_economy_service,
+            user_items_service=user_items_service
+        )
 
     @staticmethod
     def create_user_info_changer(session: Session) -> UserInfoChanger:
@@ -51,6 +54,7 @@ class JDBClassesFactory:
             product_card_service=JDBServiceFactory.create_product_card_service(session),
             product_history_service=JDBServiceFactory.create_product_history_service(session),
             economy_service=JDBServiceFactory.create_economy_service(session),
+            transit_service=JDBServiceFactory.create_transit_service(session),
             user_items_service=JDBServiceFactory.create_user_items_service(session),
             data_provider_without_key=JDUClassesFactory.create_data_provider_without_key(session, marketplace_id),
             user_market_data_provider=JDUClassesFactory.create_user_market_data_provider(session,
