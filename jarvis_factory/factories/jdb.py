@@ -29,6 +29,7 @@ class JDBClassesFactory:
         transit_economy_service = JDBServiceFactory.create_transit_service(session)
         user_items_service = JDBServiceFactory.create_user_items_service(session)
         return JormCollectorImpl(
+            economy_constants_service=JDBServiceFactory.create_economy_constants_service(session),
             marketplace_service=marketplace_service,
             niche_service=niche_service,
             category_service=category_service,
@@ -49,6 +50,7 @@ class JDBClassesFactory:
     @staticmethod
     def create_jorm_changer(session: Session, marketplace_id: int, user_id: int) -> JORMChanger:
         return JormChangerImpl(
+            economy_constants_service=JDBServiceFactory.create_economy_constants_service(session),
             category_service=JDBServiceFactory.create_category_service(session),
             niche_service=JDBServiceFactory.create_niche_service(session),
             product_card_service=JDBServiceFactory.create_product_card_service(session),
