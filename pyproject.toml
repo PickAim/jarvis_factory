@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "jarvis_factory"
-version = "0.1.24"
+version = "0.1.25"
 dependencies = [
     "jarvis_calc@ git+https://github.com/PickAim/jarvis_calc.git@v.0.1.25",
     "jarvis_db@ git+https://github.com/PickAim/jarvis_db.git@v.0.1.28",
