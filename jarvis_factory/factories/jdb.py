@@ -28,6 +28,8 @@ class JDBClassesFactory:
         simple_economy_service = JDBServiceFactory.create_economy_service(session)
         transit_economy_service = JDBServiceFactory.create_transit_service(session)
         user_items_service = JDBServiceFactory.create_user_items_service(session)
+        green_trade_zone_service = JDBServiceFactory.create_green_trade_zone_service(session)
+        niche_characteristics_service = JDBServiceFactory.create_niche_characteristics_service(session)
         return JormCollectorImpl(
             economy_constants_service=JDBServiceFactory.create_economy_constants_service(session),
             marketplace_service=marketplace_service,
@@ -35,8 +37,10 @@ class JDBClassesFactory:
             category_service=category_service,
             warehouse_service=warehouse_service,
             economy_service=simple_economy_service,
-            transit_serivce=transit_economy_service,
-            user_items_service=user_items_service
+            transit_service=transit_economy_service,
+            user_items_service=user_items_service,
+            green_zone_trade_service=green_trade_zone_service,
+            niche_characteristics_service=niche_characteristics_service
         )
 
     @staticmethod
@@ -52,12 +56,14 @@ class JDBClassesFactory:
         return JormChangerImpl(
             economy_constants_service=JDBServiceFactory.create_economy_constants_service(session),
             category_service=JDBServiceFactory.create_category_service(session),
+            niche_characteristics_service=JDBServiceFactory.create_niche_characteristics_service(session),
             niche_service=JDBServiceFactory.create_niche_service(session),
             product_card_service=JDBServiceFactory.create_product_card_service(session),
             product_history_service=JDBServiceFactory.create_product_history_service(session),
             economy_service=JDBServiceFactory.create_economy_service(session),
             transit_service=JDBServiceFactory.create_transit_service(session),
             user_items_service=JDBServiceFactory.create_user_items_service(session),
+            green_zone_trade_service=JDBServiceFactory.create_green_trade_zone_service(session),
             data_provider_without_key=JDUClassesFactory.create_data_provider_without_key(session, marketplace_id),
             user_market_data_provider=JDUClassesFactory.create_user_market_data_provider(session,
                                                                                          marketplace_id, user_id),
