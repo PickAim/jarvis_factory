@@ -1,7 +1,20 @@
-from jarvis_db.factories.services import create_category_service, create_marketplace_service, create_niche_service, \
-    create_warehouse_service, create_economy_service, create_product_card_service, \
-    create_product_history_service, create_token_service, create_user_service, create_account_service, \
-    create_user_items_service, create_transit_economy_service, create_economy_constants_service
+from jarvis_db.factories.services import (create_category_service,
+                                          create_marketplace_service,
+                                          create_niche_service,
+                                          create_warehouse_service,
+                                          create_economy_service,
+                                          create_product_card_service,
+                                          create_product_history_service,
+                                          create_token_service,
+                                          create_user_service,
+                                          create_account_service,
+                                          create_user_items_service,
+                                          create_transit_economy_service,
+                                          create_economy_constants_service,
+                                          create_niche_characteristics_service, create_green_zone_trade_service
+                                          )
+from jarvis_db.services.cache.green_zone_trade_service import GreenZoneTradeService
+from jarvis_db.services.cache.niche_characteristics_service import NicheCharacteristicsService
 from jarvis_db.services.market.infrastructure.category_service import CategoryService
 from jarvis_db.services.market.infrastructure.marketplace_service import MarketplaceService
 from jarvis_db.services.market.infrastructure.niche_service import NicheService
@@ -28,6 +41,10 @@ class JDBServiceFactory:
     @staticmethod
     def create_niche_service(session: Session) -> NicheService:
         return create_niche_service(session)
+
+    @staticmethod
+    def create_niche_characteristics_service(session: Session) -> NicheCharacteristicsService:
+        return create_niche_characteristics_service(session)
 
     @staticmethod
     def create_warehouse_service(session: Session) -> WarehouseService:
@@ -68,3 +85,7 @@ class JDBServiceFactory:
     @staticmethod
     def create_economy_constants_service(session: Session) -> EconomyConstantsService:
         return create_economy_constants_service(session)
+
+    @staticmethod
+    def create_green_trade_zone_service(session: Session) -> GreenZoneTradeService:
+        return create_green_zone_trade_service(session)
