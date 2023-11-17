@@ -39,7 +39,7 @@ class JDBClassesFactory:
             economy_service=simple_economy_service,
             transit_service=transit_economy_service,
             user_items_service=user_items_service,
-            green_zone_trade_service=green_trade_zone_service,
+            green_trade_zone_service=green_trade_zone_service,
             niche_characteristics_service=niche_characteristics_service
         )
 
@@ -63,7 +63,7 @@ class JDBClassesFactory:
             economy_service=JDBServiceFactory.create_economy_service(session),
             transit_service=JDBServiceFactory.create_transit_service(session),
             user_items_service=JDBServiceFactory.create_user_items_service(session),
-            green_zone_trade_service=JDBServiceFactory.create_green_trade_zone_service(session),
+            green_trade_zone_service=JDBServiceFactory.create_green_trade_zone_service(session),
             data_provider_without_key=JDUClassesFactory.create_data_provider_without_key(session, marketplace_id),
             user_market_data_provider=JDUClassesFactory.create_user_market_data_provider(session,
                                                                                          marketplace_id, user_id),

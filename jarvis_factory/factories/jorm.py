@@ -59,4 +59,4 @@ class JORMClassesFactory:
 
     @staticmethod
     def create_default_warehouse() -> Warehouse:
-        return Warehouse(DEFAULT_WAREHOUSE_NAME, 1, HandlerType.MARKETPLACE, Address())
+        return Warehouse(DEFAULT_WAREHOUSE_NAME, 1, HandlerType.MARKETPLACE, Address("", ""))
