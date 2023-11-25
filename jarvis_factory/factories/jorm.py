@@ -49,7 +49,8 @@ class JORMClassesFactory:
             spec_leftovers: list[SpecifiedLeftover] = [SpecifiedLeftover("second", max(0, leftover_func(cost) - 5))]
             after_trade_storage_dict = StorageDict()
             after_trade_storage_dict[1] = spec_leftovers
-            products.append(Product(f'prod{i}', cost, i, 4.0, "brand", "seller", niche_name, DEFAULT_CATEGORY_NAME,
+            products.append(Product(f'prod{i}', cost, i, 4.0, "brand", "seller",
+                                    category_niche_list=[(DEFAULT_CATEGORY_NAME, niche_name)],
                                     history=ProductHistory([
                                         ProductHistoryUnit(1, datetime.utcnow(), before_trade_storage_dict),
                                         ProductHistoryUnit(3, datetime.utcnow(), after_trade_storage_dict)]),
